@@ -58,19 +58,20 @@ app.get("/location", function (req, res) {
     //var sql = "SELECT * from location WHERE Location_name = ?";
     //con.query(sql, [nimi], function (err, result){
     con.query('SELECT * FROM location', function(error, result, fields) {
-         if (result) {
+        /*
+        if (result) {
               res.end(JSON.stringify(result));
           } else {
               return res.send({ error: true, data: result });
-          }
-         /*
+          }*/
+
         if (err)
             throw (err);
         else{
             console.log(result);
             res.end(JSON.stringify(result));
 
-        }*/
+        }
     })
 });
 
