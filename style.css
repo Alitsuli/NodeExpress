@@ -1,0 +1,10 @@
+.container {
+    border: 1px solid black;
+    padding: 25px;
+}
+.btn-space {
+    margin-right: 25px;
+}
+body {
+    background-color: antiquewhite;
+}

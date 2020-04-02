@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fin">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href="style.css" type="text/css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="server.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<body>
+<form role="form">
+    <div class="container" id="wholeContainer">
+        <h1>Syötä päivämääräväli</h1>
+        <div class="controls form-inline">
+            <div class="form-group">
+                <label for="startingDate">Alkupäivämäärä:</label>
+                <input type="date" class="form-control" id="startingDate" name="startingDate"/>
+            </div>
+            <div class="form-group">
+                <label for="endingDate">Loppupäivämäärä:</label>
+                <input type="date" class="form-control" id="endingDate" name="endingDate"/>
+            </div>
+        </div>
+        <div id="locationInfo" class="controls form-inline">
+        </div>
+        <input onclick="makeQuery()" type="button" value="Lähetä" id="submit">
+    </div>
+</form>
+<script>
+    var json;
+    function makeQuery() {
+        var startdate = document.getElementById("startingDate").value;
+        var enddate = document.getElementById("endingDate").value;
+        if (startdate.length === 0) { // fix this and support empty field
+            return;
+        } else {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                    json = JSON.parse(xmlhttp.responseText);
+                    var length = 0;
+                    for (var key in json) {
+                        if (json.hasOwnProperty(key)) {
+                            length++;
+                        }
+                    }
+                    // something found
+                    if (length> 0){
+                        console.log(json[0].Location_name);
+                        showList(json);
+                    }
+                    else {
+                        document.getElementById("locationInfo").innerHTML = "<br/>Ei tapahtumatietoja tältä ajalta.";
+                    }
+                }
+            };
+            xmlhttp.open("GET", "http://localhost:8081/events?start=" + startdate+"&end="+enddate, true);
+            xmlhttp.send();
+        }
+    }
+
+
+
+    function showList(json) {
+        var divElement = document.getElementById("locationInfo");
+
+        var i;
+        var unOrdered;
+        var listElement, nestedElement, unNestedElement;
+        var string;
+        for (i in json) {
+            // create a form group div
+            unOrdered = document.createElement("ul");
+            unOrdered.setAttribute("class", "del"); // mark all these dynamically created elements to be "deleted"
+            divElement.appendChild(unOrdered);
+
+            listElement = document.createElement("li");
+            listElement.setAttribute("class", "del");
+            string = json[i].Name;
+            listElement.innerHTML = string;
+            unOrdered.appendChild(listElement);
+            nestedElement = document.createElement("ul");
+            nestedElement.setAttribute("class", "del");
+            listElement.appendChild(nestedElement);
+            unNestedElement = document.createElement("li");
+            unNestedElement.setAttribute("class", "del");
+            string = json[i].Type+", "+json[i].Date+",  "+json[i].Location_name;
+            unNestedElement.innerHTML = string;
+            nestedElement.appendChild(unNestedElement);
+        }
+
+        // delete submit-button
+        var submitBtn = document.getElementById("submit");
+        var parent  = document.getElementById("wholeContainer");
+        parent.removeChild(submitBtn);
+        // add ok-button
+        okBtn = document.createElement("input");
+        okBtn.setAttribute("type", "button");
+        okBtn.setAttribute("value", "Ok");
+        okBtn.setAttribute("id", "Ok");
+        okBtn.setAttribute("onclick", "Clear()");
+        parent.appendChild(okBtn);
+
+    }
+
+
+
+    function Clear() {
+
+        // delete unordered list with jQuery
+        $('.del').remove();
+
+        // delete Ok-button
+        var btn = document.getElementById("Ok");
+        var parent  = document.getElementById("wholeContainer");
+        parent.removeChild(btn);
+
+        // put submit-button again on the form...
+        submitBtn = document.createElement("input");
+        submitBtn.setAttribute("type", "button");
+        submitBtn.setAttribute("value", "Lähetä");
+        submitBtn.setAttribute("id", "submit");
+        submitBtn.setAttribute("onclick", "makeQuery()");
+        var parent  = document.getElementById("wholeContainer");
+        parent.appendChild(submitBtn);
+    }
+
+</script>
+</body>
+</html>
