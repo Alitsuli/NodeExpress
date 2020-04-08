@@ -3,6 +3,8 @@ var express = require('express');
 var app = express();
 var url = require('url');
 var mysql = require('mysql');
+var bodyParser = require('body-parser');
+var cors = require('cors');
 
 var server = app.listen(8081, function () {
     var host = server.address().address;
@@ -17,15 +19,15 @@ var con = mysql.createConnection({
     database: "example_db"
 });
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+app.use(bodyParser.json());
+app.use(cors());
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 
-app.get("/events", function (req, res) {
+
+app.get("/api/events", function (req, res) {
     console.log("get events ");
-    // var q = url.parse(req.url, true).query;
     var q = url.parse(req.url, true).query;
     var startDate = q.start;
     var endDate = q.end;
@@ -43,17 +45,9 @@ app.get("/events", function (req, res) {
     });
 });
 
-var bodyParser = require('body-parser');
-var cors = require('cors');
-app.use(bodyParser.json());
-app.use(cors());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-
+//get all location
 app.get("/location", function (req, res) {
     console.log("get location details");
-    var q = url.parse(req.url, true).query;
     con.query('SELECT * FROM location', function(error, result, fields) {
         if (err)
             throw (err);
@@ -65,6 +59,63 @@ app.get("/location", function (req, res) {
     })
 });
 
-app.use(bodyParser.urlencoded({
-    extended: false }));
-app.use(bodyParser.json());
+app.post('/api/event', async function (req,res) {
+    let data = req.body;
+
+    var usedLocIds = [];
+    var usedEventIds = [];
+
+    function replaceHyph(myStr){
+        return myStr.replace(/-/g, "");
+    }
+    db.query("SELECT location.Location_id FROM location;", function(err, result){
+        if (err) throw err;
+        usedLocIds = result;
+        db.query("SELECT event.Event_id FROM event;", function (err, result){
+            if (err) throw err;
+            usedEventIds = result;
+
+            if(usedLocIds.length < data.eventLocation) {
+                console.log("Event location not in db");
+
+                let sql = "INSERT INTO location (Location_id, Location_name, Street_address, City, Zip, Country) VALUES (?, ?, ?, ?, ?, ?)";
+
+                db.query(sql,[data.eventLocation, data.locName, data.locStreetAddress, data.locCity, data.locZip, data.locCountry], function(err, result){
+                    if (err) throw err;
+
+                    sql = "INSERT INTO event (Event_id, Name, Type, Location_Location_id) VALUES (?, ?, ?, ?)";
+
+                    db.query(sql, [(usedEventIds.length+1), data.eventName, data.eventType,data.eventLocation], function(err, result){
+                        if (err) throw err;
+
+                        sql = "INSERT INTO event_date (Date, Event_id) VALUES (?, ?)";
+
+                        db.query(sql, [replaceHyph(data.eventDate), (usedEventIds.length+1)], function(err, result){
+                            if (err) throw err;
+                        });
+                    });
+                });
+
+                res.send("OK");
+
+            }else{
+                console.log("Event location already in db");
+
+                let sql = "INSERT INTO event (Event_id, Name, Type, Location_Location_id) VALUES (?, ?, ?, ?)";
+
+                db.query(sql, [(usedEventIds.length+1), data.eventName, data.eventType, data.eventLocation], function(err, result){
+                    if (err) throw err;
+
+                    sql = "INSERT INTO event_date (Date, Event_id) VALUES (?, ?)";
+
+                    db.query(sql, [replaceHyph(data.eventDate), (usedEventIds.length+1)], function(err, result){
+                        if (err) throw err;
+                    });
+                });
+
+                res.send("OK");
+            }
+
+        });
+    });
+});
