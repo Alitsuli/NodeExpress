@@ -54,17 +54,7 @@ app.use(bodyParser.urlencoded({
 app.get("/location", function (req, res) {
     console.log("get location details");
     var q = url.parse(req.url, true).query;
-    var nimi = q.nimi;
-    //var sql = "SELECT * from location WHERE Location_name = ?";
-    //con.query(sql, [nimi], function (err, result){
     con.query('SELECT * FROM location', function(error, result, fields) {
-        /*
-        if (result) {
-              res.end(JSON.stringify(result));
-          } else {
-              return res.send({ error: true, data: result });
-          }*/
-
         if (err)
             throw (err);
         else{
