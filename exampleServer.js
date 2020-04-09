@@ -94,14 +94,19 @@ function router(req, res) {
 }*/
 
 // tehtävä 6
-const mysql = require('mysql');
-var conn = mysql.createConnection({
-    host: "localhost",
-    user: "olso",
-    password: "olso",
-    database: "example_db"
-})
+
+var http = require('http');
+http.createServer(router).listen(8080);
+console.log('Server running on port 8080.');
+
 async function router () {
+    const mysql = require('mysql');
+    var conn = mysql.createConnection({
+        host: "localhost",
+        user: "olso",
+        password: "olso",
+        database: "example_db"
+    })
     try{
         await new Promise ((req, res) =>{
             conn.query('select * from event;', function (error, result, fields){
@@ -118,7 +123,4 @@ async function router () {
     }
 }
 
-var http = require('http');
-http.createServer(router).listen(8080);
-console.log('Server running on port 8080.');
 
