@@ -58,6 +58,7 @@ var server = app.listen(8081, function () {
     console.log("Example app listening at http://%s:%s", host, port)
 })*/
 
+/*
 var mysql = require('mysql');
 var http = require('http');
 var db = null;
@@ -90,4 +91,34 @@ function router(req, res) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end(JSON.stringify(result));
     });
+}*/
+
+// tehtävä 6
+const mysql = require('mysql');
+var conn = mysql.createConnection({
+    host: "localhost",
+    user: "olso",
+    password: "olso",
+    database: "example_db"
+})
+async function router () {
+    try{
+        await new Promise ((req, res) =>{
+            conn.query('select * from event;', function (error, result, fields){
+                if (error) {
+                    throw error;
+                }
+                console.log(result);
+            })
+        })
+    }catch (err) {
+        throw err;
+    }finally {
+        await conn.end();
+    }
 }
+
+var http = require('http');
+http.createServer(router).listen(8080);
+console.log('Server running on port 8080.');
+
