@@ -58,7 +58,7 @@ var server = app.listen(8081, function () {
     console.log("Example app listening at http://%s:%s", host, port)
 })*/
 
-/*
+
 var mysql = require('mysql');
 var http = require('http');
 var db = null;
@@ -91,8 +91,9 @@ function router(req, res) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end(JSON.stringify(result));
     });
-}*/
+}
 
+/*
 // tehtävä 6
 
 var http = require('http');
@@ -123,4 +124,4 @@ async function router () {
     }
 }
 
-
+*/
