@@ -1,4 +1,3 @@
-
 var express = require('express');
 var app = express();
 var url = require('url');
@@ -46,56 +45,57 @@ app.get("/api/events", function (req, res) {
 
 var locationId = [];
 var eventId = [];
-app.post("/api/events", async function (req,res) {
-    /***
-     * test post
-    console.log("body: %j", req.body);
-    console.log(req.body.data);
-    */
 
-    let data = req.body;
+app.post("/api/events", async function (req,res) {
+
+     console.log("body: %j", req.body);
+     console.log(req.body.data);
+     let data = req.body;
 
     con.query("SELECT location.Location_id FROM location;", function (err, result) {
         if(err)
             throw err;
         else
             eventId = result;
-            if(locationId.length< data.eventLocation) {
-                console.log("Tapahtuma sijainti ei ole db:ssä");
+        if(locationId.length< data.eventLocation) {
+            console.log("Tapahtuma sijainti ei ole db:ssä");
 
-                let sql = "INSERT INTO location (Location_id, Location_name, Street_address, City, Zip, Country) VALUES (?, ?, ?, ?, ?, ?)";
-                con.query(sql, [data.eventLocation, data.locName, data.locStreetAddress, data.locCity, data.locZip, data.locCountry], function (err, result) {
+            let sql = "INSERT INTO location (Location_id, Location_name, Street_address, City, Zip, Country) VALUES (?, ?, ?, ?, ?, ?)";
+            con.query(sql, [data.eventLocation, data.locName, data.locStreetAddress, data.locCity, data.locZip, data.locCountry], function (err, result) {
+                if (err)
+                    throw err;
+                else
+                    console.log(result + "Paikka on lisätty");
+
+                sql = "INSERT INTO event (Event_id, Name, Type,Location_Location_id) VALUES (?, ?, ?, ?)";
+                con.query(sql, [(eventId.length + 1), data.eventName, data.eventType, data.eventLocation], function (err, result) {
                     if (err)
                         throw err;
                     else
-                        console.log(result + "Paikka on lisätty");
-
-                    sql = "INSERT INTO event (Event_id, Name, Type,Location_Location_id) VALUES (?, ?, ?, ?)";
-                    con.query(sql, [(eventId.length + 1), data.eventName, data.eventType, data.eventLocation], function (err, result) {
-                        if (err)
-                            throw err;
-                        else
-                            console.log(result + "Tapahtuma on lisätty");
-                        sql = "INSERT INTO event_date (Date, Event_id) VALUES (?, ?)";
-                    });
-                });
-
-                res.send("lisätty!");
-            }else{
-                console.log("Tapahtuma sijainti on db:ssä");
-                let sql = "INSERT INTO event (Event_id, Name, Type, Location_Location_id) VALUES (?, ?, ?, ?)";
-
-                con.query(sql, [(eventId.length+1), data.eventName, data.eventType,data.eventLocation], function(err, result){
-                    if (err)
-                        throw err;
-                    else
-                        console.log(result + "Test 3");
-
+                        console.log(result + "Tapahtuma on lisätty");
                     sql = "INSERT INTO event_date (Date, Event_id) VALUES (?, ?)";
                 });
+            });
 
-                res.send("OK");
-            }
+            res.send("lisätty!");
+        }else{
+
+            console.log("Tapahtuma sijainti on db:ssä");
+            let sql = "INSERT INTO event (Event_id, Name, Type, Location_Location_id) VALUES (?, ?, ?, ?)";
+
+            con.query(sql, [(eventId.length+1), data.eventName, data.eventType,data.eventLocation], function(err, result){
+                if (err)
+                    throw err;
+                else
+                    console.log(result + "");
+
+                sql = "INSERT INTO event_date (Date, Event_id) VALUES (?, ?)";
+                db.query(sql, [replaceHyph(data.eventDate), (usedEventIds.length+1)], function(err, result){
+                    if (err) throw err;
+                });
+                res.send("muokattu");
+            });
+        }
     });
 });
 
