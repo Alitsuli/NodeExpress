@@ -5,7 +5,7 @@
         var age = document.getElementById('age').value;
 
         if(fName=='' || lName=='' || email=='' || age==''){
-            document.getElementById("eresult").innerHTML = "Täyttää kaikki paikat";
+            document.getElementById("eresult").innerHTML = "Täyttää kaikki kentät!";
             return false;
         }else {
             return true;

@@ -48,6 +48,12 @@ input[type=submit]{
     cursor: pointer;
 }
 div {
+    margin: auto;
+    position: center;
+    left: 0;
+    right: 0;
+    width: 200px;
+    height: 150px;
     color: red;
     font-size: medium;
     font-weight: bold;
