@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lomake-esimerkki</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <form action = "http://127.0.0.1:8081/process_post" method = "POST" onsubmit="return validation();" autocomplete="off">
+        First Name: <input type = "text" id="fName" name="first_name" pattern="((.*[A-Z].{1,}))" title="Ensimmäinen kirjain isolla
+        ja enemmän kuin kaksi kirjainta!"><br>
+        Last Name: <input type = "text" id="lName" name="last_name" pattern="((.*[A-Z].{1,}))" title="Ensimmäinen kirjain isolla
+        ja enemmän kuin kaksi kirjainta!"><br>
+        Age:  <input type = "number" id="age" name="number" title="Kerro ikäsi numerolla"><br>
+        Email: <input type = "text" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+        title="example@example.com"><br>
+        <input type = "submit" value = "Submit">
+
+    </form>
+
+<div id="eresult"></div>
+</body>
+</html>
