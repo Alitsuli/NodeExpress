@@ -1,25 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            text-decoration: none;
+            font-family: 'Josefin Sans', sans-serif;
+        }
+        body{
+            background: #3aaf9f;
+        }
+        #age,#email,#fName,#lName{
+            width: 320px;
+        }
+        form{
+            margin: 200px auto;
+            width: 320px;
+        }
+
+        input:invalid {
+            border: 2px dashed red;
+        }
+        input{
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        input[type=submit]{
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        div {
+            margin: auto;
+            position: center;
+            left: 0;
+            right: 0;
+            width: 200px;
+            height: 150px;
+            color: red;
+            font-size: medium;
+            font-weight: bold;
+        }
+        p{
+            margin: auto;
+            position: center;
+            left: 0px;
+            right: 0;
+            width: 300px;
+            color: red;
+            font-size: 200%;
+            font-weight: bold;
+        }
+    </style>
     <meta charset="UTF-8">
     <title>Lomake-esimerkki</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <script src="script.js"></script>
 </head>
-<body>
 
+
+<body>
+    <p>POST Method</p>
     <form action = "http://127.0.0.1:8081/process_post" method = "POST" onsubmit="return validation();" autocomplete="off">
         Etunimi: <input type = "text" id="fName" name="first_name" pattern="(.*[A-Z].{1,})" title="Ensimmäinen kirjain isolla
         ja enemmän kuin kaksi kirjainta!"><br>
         Sukunimi: <input type = "text" id="lName" name="last_name" pattern="(.*[A-Z].{1,})" title="Ensimmäinen kirjain isolla
         ja enemmän kuin kaksi kirjainta!"><br>
-        Ikä:  <input type = "text" id="age" name="number" pattern=".*[0-9]" title="Kerro ikäsi numerolla"><br>
+        Ikä:  <input type = "text" id="age" name="age" pattern=".*[0-9]" title="Kerro ikäsi numerolla"><br>
         Sähköposti: <input type = "text" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
         title="example@example.com"><br>
         <input type = "submit" value = "Lähetä">
-
     </form>
-
 <div id="eresult"></div>
+
+<script type="text/javascript">
+    function validation() {
+        var fName = document.getElementById('fName').value;
+        var lName = document.getElementById('lName').value;
+        var email = document.getElementById('email').value;
+        var age = document.getElementById('age').value;
+
+        if(fName=='' || lName=='' || email=='' || age==''){
+            document.getElementById("eresult").innerHTML = "Täyttää kaikki kentät!";
+            return false;
+        }else {
+            return true;
+        }
+    }
+</script>
+
 </body>
 </html>
